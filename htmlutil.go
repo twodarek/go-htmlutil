@@ -10,7 +10,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-// Returned by any of the functions for getting HTML nodes
+// ErrNodeNotFound is returned by any of the functions for getting HTML nodes
 var ErrNodeNotFound = errors.New("no nodes found")
 
 // GetAllHtmlNodes is a convenience function for GetHtmlNodes() that returns all HTML nodes.
