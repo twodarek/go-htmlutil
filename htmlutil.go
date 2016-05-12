@@ -1,5 +1,5 @@
 /*
-Various utility functions for working with HTML nodes.
+Package htmlutil provides various utility functions for working with HTML nodes.
 */
 package htmlutil
 
@@ -10,26 +10,27 @@ import (
 	"golang.org/x/net/html"
 )
 
+// Returned by any of the functions for getting HTML nodes
 var ErrNodeNotFound = errors.New("no nodes found")
 
-// Convenience function for GetHtmlNodes() that returns all HTML nodes.
+// GetAllHtmlNodes is a convenience function for GetHtmlNodes() that returns all HTML nodes.
 func GetAllHtmlNodes(n *html.Node, tag string, attr string, attrValue string) ([]*html.Node, error) {
 	return GetHtmlNodes(n, tag, attr, attrValue, -1)
 }
 
-// Convenience function for GetHtmlNodes() that retuns the first matching node.
+// GetFirstHtmlNode is a convenience function for GetHtmlNodes() that returns the first matching node.
 func GetFirstHtmlNode(n *html.Node, tag string, attr string, attrValue string) (*html.Node, error) {
 	htmlNodes, err := GetHtmlNodes(n, tag, attr, attrValue, 1)
 
 	if len(htmlNodes) > 0 {
 		return htmlNodes[0], err
-	} else {
-		return &html.Node{}, err
 	}
+
+	return &html.Node{}, err
 }
 
-// Returns the HTML nodes found within the provided node given a tag,
-// attribute, and attribute value up to the provided count.
+// GetHtmlNodes returns the HTML nodes found within the provided node given a
+// tag, attribute, and attribute value up to the provided count.
 //
 // The attribute and the attribute value are optional. If they are empty, they
 // will not be used as search criteria.
@@ -82,7 +83,7 @@ func GetHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count
 	return foundNodes, err
 }
 
-// Convert an HTML node to a string for easier printing
+// HtmlNodeToString converts an HTML node to a string for easier printing
 func HtmlNodeToString(n *html.Node) (string, error) {
 	var buf bytes.Buffer
 
