@@ -10,15 +10,17 @@ import (
 	"golang.org/x/net/html"
 )
 
-// ErrNodeNotFound is returned by any of the functions for getting HTML nodes
+// ErrNodeNotFound is returned by any of the functions for getting HTML nodes.
 var ErrNodeNotFound = errors.New("no nodes found")
 
-// GetAllHtmlNodes is a convenience function for GetHtmlNodes() that returns all HTML nodes.
+// GetAllHtmlNodes is a convenience function for GetHtmlNodes() that returns all
+// HTML nodes.
 func GetAllHtmlNodes(n *html.Node, tag string, attr string, attrValue string) ([]*html.Node, error) {
 	return GetHtmlNodes(n, tag, attr, attrValue, -1)
 }
 
-// GetFirstHtmlNode is a convenience function for GetHtmlNodes() that returns the first matching node.
+// GetFirstHtmlNode is a convenience function for GetHtmlNodes() that returns
+// the first matching node.
 func GetFirstHtmlNode(n *html.Node, tag string, attr string, attrValue string) (*html.Node, error) {
 	htmlNodes, err := GetHtmlNodes(n, tag, attr, attrValue, 1)
 
@@ -83,7 +85,7 @@ func GetHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count
 	return foundNodes, err
 }
 
-// HtmlNodeToString converts an HTML node to a string for easier printing
+// HtmlNodeToString converts an HTML node to a string for easier printing.
 func HtmlNodeToString(n *html.Node) (string, error) {
 	var buf bytes.Buffer
 
@@ -91,4 +93,39 @@ func HtmlNodeToString(n *html.Node) (string, error) {
 		return "", err
 	}
 	return buf.String(), nil
+}
+
+// RemoveAllHtmlNodes is a convenience function for RemoveHtmlNodes() that
+// removes all matching HTML nodes.
+func RemoveAllHtmlNodes(n *html.Node, tag string, attr string, attrValue string) *html.Node {
+	return RemoveHtmlNodes(n, tag, attr, attrValue, -1)
+}
+
+// RemoveFirstHtmlNode is a convenience function for RemoveHtmlNodes() that
+// removes the first matching node.
+func RemoveFirstHtmlNode(n *html.Node, tag string, attr string, attrValue string) *html.Node {
+	return RemoveHtmlNodes(n, tag, attr, attrValue, 1)
+}
+
+// RemoveHtmlNodes removes the HTML nodes found within the provided node given a
+// tag, attribute, and attribute value up to the provided count and returns the
+// provided node with the nodes removed.
+//
+// The attribute and the attribute value are optional. If they are empty, they
+// will not be used as search criteria.
+//
+// If the count is -1, all nodes meeting the criteria will be removed.
+func RemoveHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count int) *html.Node {
+	nodesToDelete, err := GetHtmlNodes(n, tag, attr, attrValue, count)
+	// If the nodes to delete aren't found, there's nothing to do
+	if err == ErrNodeNotFound {
+		return n
+	}
+
+	// Delete nodes in reverse order (so the children get deleted first)
+	for i := len(nodesToDelete) - 1; i >= 0; i-- {
+		nodesToDelete[i].Parent.RemoveChild(nodesToDelete[i])
+	}
+
+	return n
 }
