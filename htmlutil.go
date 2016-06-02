@@ -5,30 +5,26 @@ package htmlutil
 
 import (
 	"bytes"
-	"errors"
 
 	"golang.org/x/net/html"
 )
 
-// ErrNodeNotFound is returned by any of the functions for getting HTML nodes.
-var ErrNodeNotFound = errors.New("no nodes found")
-
 // GetAllHtmlNodes is a convenience function for GetHtmlNodes() that returns all
-// HTML nodes.
-func GetAllHtmlNodes(n *html.Node, tag string, attr string, attrValue string) ([]*html.Node, error) {
+// matching HTML nodes.
+func GetAllHtmlNodes(n *html.Node, tag string, attr string, attrValue string) []*html.Node {
 	return GetHtmlNodes(n, tag, attr, attrValue, -1)
 }
 
 // GetFirstHtmlNode is a convenience function for GetHtmlNodes() that returns
 // the first matching node.
-func GetFirstHtmlNode(n *html.Node, tag string, attr string, attrValue string) (*html.Node, error) {
-	htmlNodes, err := GetHtmlNodes(n, tag, attr, attrValue, 1)
+func GetFirstHtmlNode(n *html.Node, tag string, attr string, attrValue string) *html.Node {
+	htmlNodes := GetHtmlNodes(n, tag, attr, attrValue, 1)
 
 	if len(htmlNodes) > 0 {
-		return htmlNodes[0], err
+		return htmlNodes[0]
 	}
 
-	return &html.Node{}, err
+	return &html.Node{}
 }
 
 // GetHtmlNodes returns the HTML nodes found within the provided node given a
@@ -38,8 +34,7 @@ func GetFirstHtmlNode(n *html.Node, tag string, attr string, attrValue string) (
 // will not be used as search criteria.
 //
 // If the count is -1, all nodes will be returned.
-func GetHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count int) ([]*html.Node, error) {
-	var err error
+func GetHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count int) []*html.Node {
 	var foundNodes []*html.Node
 
 	var f func(*html.Node)
@@ -78,11 +73,7 @@ func GetHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count
 	}
 	f(n)
 
-	if len(foundNodes) == 0 {
-		err = ErrNodeNotFound
-	}
-
-	return foundNodes, err
+	return foundNodes
 }
 
 // HtmlNodeToString converts an HTML node to a string for easier printing.
@@ -116,15 +107,13 @@ func RemoveFirstHtmlNode(n *html.Node, tag string, attr string, attrValue string
 //
 // If the count is -1, all nodes meeting the criteria will be removed.
 func RemoveHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count int) *html.Node {
-	nodesToDelete, err := GetHtmlNodes(n, tag, attr, attrValue, count)
-	// If the nodes to delete aren't found, there's nothing to do
-	if err == ErrNodeNotFound {
-		return n
-	}
+	nodesToDelete := GetHtmlNodes(n, tag, attr, attrValue, count)
 
-	// Delete nodes in reverse order (so the children get deleted first)
-	for i := len(nodesToDelete) - 1; i >= 0; i-- {
-		nodesToDelete[i].Parent.RemoveChild(nodesToDelete[i])
+	if len(nodesToDelete) > 0 {
+		// Delete nodes in reverse order (so the children get deleted first)
+		for i := len(nodesToDelete) - 1; i >= 0; i-- {
+			nodesToDelete[i].Parent.RemoveChild(nodesToDelete[i])
+		}
 	}
 
 	return n
