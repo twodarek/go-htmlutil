@@ -45,19 +45,10 @@ func GetHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count
 				foundNodes = append(foundNodes, n)
 			} else {
 				for _, a := range n.Attr {
-					if attrValue == "" {
-						if a.Key == attr {
-							foundNodes = append(foundNodes, n)
-							if count != -1 && len(foundNodes) >= count {
-								break
-							}
-						}
-					} else {
-						if a.Key == attr && a.Val == attrValue {
-							foundNodes = append(foundNodes, n)
-							if count != -1 && len(foundNodes) >= count {
-								break
-							}
+					if a.Key == attr && (a.Val == attrValue || attrValue == "") {
+						foundNodes = append(foundNodes, n)
+						if count != -1 && len(foundNodes) >= count {
+							break
 						}
 					}
 				}
