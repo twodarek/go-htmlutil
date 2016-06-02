@@ -30,8 +30,8 @@ func GetFirstHtmlNode(n *html.Node, tag string, attr string, attrValue string) *
 // GetHtmlNodes returns the HTML nodes found within the provided node given a
 // tag, attribute, and attribute value up to the provided count.
 //
-// The attribute and the attribute value are optional. If they are empty, they
-// will not be used as search criteria.
+// The tag, attribute, and attribute value are all optional. If they are empty,
+// they will not be used as search criteria.
 //
 // If the count is -1, all nodes will be returned.
 func GetHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count int) []*html.Node {
@@ -39,8 +39,8 @@ func GetHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count
 
 	var f func(*html.Node)
 	f = func(n *html.Node) {
-		// Find the element with the provided tag
-		if n.Type == html.ElementNode && n.Data == tag {
+		// Find the element with the matching tag
+		if n.Type == html.ElementNode && (n.Data == tag || tag == "") {
 			if attr == "" {
 				foundNodes = append(foundNodes, n)
 			} else {
@@ -102,8 +102,8 @@ func RemoveFirstHtmlNode(n *html.Node, tag string, attr string, attrValue string
 // tag, attribute, and attribute value up to the provided count and returns the
 // provided node with the nodes removed.
 //
-// The attribute and the attribute value are optional. If they are empty, they
-// will not be used as search criteria.
+// The tag, attribute, and attribute value are all optional. If they are empty,
+// they will not be used as search criteria.
 //
 // If the count is -1, all nodes meeting the criteria will be removed.
 func RemoveHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count int) *html.Node {
