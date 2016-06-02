@@ -40,12 +40,10 @@ func GetHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count
 	var f func(*html.Node)
 	f = func(n *html.Node) {
 		// Find the element with the matching tag
-		if n.Type == html.ElementNode && (n.Data == tag || tag == "") {
-			if attr == "" {
-				foundNodes = append(foundNodes, n)
-			} else {
-				for _, a := range n.Attr {
-					if a.Key == attr && (a.Val == attrValue || attrValue == "") {
+		if n.Type == html.ElementNode && (tag == "" || n.Data == tag) {
+			for _, a := range n.Attr {
+				if attr == "" || a.Key == attr {
+					if attrValue == "" || a.Val == attrValue {
 						foundNodes = append(foundNodes, n)
 						if count != -1 && len(foundNodes) >= count {
 							break
