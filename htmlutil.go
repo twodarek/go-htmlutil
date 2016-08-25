@@ -85,25 +85,24 @@ func HtmlNodeToString(n *html.Node) (string, error) {
 
 // RemoveAllHtmlNodes is a convenience function for RemoveHtmlNodes() that
 // removes all matching HTML nodes.
-func RemoveAllHtmlNodes(n *html.Node, tag string, attr string, attrValue string) *html.Node {
-	return RemoveHtmlNodes(n, tag, attr, attrValue, -1)
+func RemoveAllHtmlNodes(n *html.Node, tag string, attr string, attrValue string) {
+	RemoveHtmlNodes(n, tag, attr, attrValue, -1)
 }
 
 // RemoveFirstHtmlNode is a convenience function for RemoveHtmlNodes() that
 // removes the first matching node.
-func RemoveFirstHtmlNode(n *html.Node, tag string, attr string, attrValue string) *html.Node {
-	return RemoveHtmlNodes(n, tag, attr, attrValue, 1)
+func RemoveFirstHtmlNode(n *html.Node, tag string, attr string, attrValue string) {
+	RemoveHtmlNodes(n, tag, attr, attrValue, 1)
 }
 
 // RemoveHtmlNodes removes the HTML nodes found within the provided node given a
-// tag, attribute, and attribute value up to the provided count and returns the
-// provided node with the nodes removed.
+// tag, attribute, and attribute value up to the provided count.
 //
 // The tag, attribute, and attribute value are all optional. If they are empty,
 // they will not be used as search criteria.
 //
 // If the count is -1, all nodes meeting the criteria will be removed.
-func RemoveHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count int) *html.Node {
+func RemoveHtmlNodes(n *html.Node, tag string, attr string, attrValue string, count int) {
 	nodesToDelete := GetHtmlNodes(n, tag, attr, attrValue, count)
 
 	if len(nodesToDelete) > 0 {
@@ -112,6 +111,4 @@ func RemoveHtmlNodes(n *html.Node, tag string, attr string, attrValue string, co
 			nodesToDelete[i].Parent.RemoveChild(nodesToDelete[i])
 		}
 	}
-
-	return n
 }
