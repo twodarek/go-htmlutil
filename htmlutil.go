@@ -83,6 +83,45 @@ func HtmlNodeToString(n *html.Node) (string, error) {
 	return buf.String(), nil
 }
 
+// RemoveAllHtmlAttrs is a convenience function for RemoveHtmlAttrs() that
+// removes all matching attributes.
+func RemoveAllHtmlAttrs(n *html.Node, tag string, attr string, attrValue string) {
+	RemoveHtmlAttrs(n, tag, attr, attrValue, -1)
+}
+
+// RemoveFirstHtmlAttr is a convenience function for RemoveHtmlAttrs() that
+// removes the first matching attribute.
+func RemoveFirstHtmlAttr(n *html.Node, tag string, attr string, attrValue string) {
+	RemoveHtmlAttrs(n, tag, attr, attrValue, 1)
+}
+
+// RemoveHtmlAttrs removes HTML attributes matching the provided tag, attribute,
+// and value up to the provided count.
+//
+// Tag is optional. If no tag is provided, all attributes matching the attribute
+// and value will be removed.
+//
+// If the count is -1, all attributes meeting the criteria will be removed.
+func RemoveHtmlAttrs(node *html.Node, tag string, attr string, attrValue string, count int) {
+	var processNode func(*html.Node, string, string)
+	processNode = func(nodeToProcess *html.Node, attr string, attrValue string) {
+		for i, a := range nodeToProcess.Attr {
+			// If we have a matching attribute and value
+			if a.Key == attr && a.Val == attrValue {
+				// Go idiom to delete the item from the array
+				nodeToProcess.Attr = append(nodeToProcess.Attr[:i], nodeToProcess.Attr[i+1:]...)
+
+				// Run this function again on the newly modified node in case there are any other matches
+				processNode(nodeToProcess, attr, attrValue)
+			}
+		}
+	}
+
+	for _, nodeToProcess := range GetHtmlNodes(node, tag, attr, attrValue, count) {
+		processNode(nodeToProcess, attr, attrValue)
+	}
+}
+
 // RemoveAllHtmlNodes is a convenience function for RemoveHtmlNodes() that
 // removes all matching HTML nodes.
 func RemoveAllHtmlNodes(n *html.Node, tag string, attr string, attrValue string) {
