@@ -1,5 +1,5 @@
 module github.com/twodarek/go-htmlutil
 
-go 1.19
+go 1.24
 
-require golang.org/x/net v0.33.0
+require golang.org/x/net v0.37.0
